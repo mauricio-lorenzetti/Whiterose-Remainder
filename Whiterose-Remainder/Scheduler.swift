@@ -13,10 +13,11 @@ import UserNotifications
 class Scheduler {
     
     let nc:UNUserNotificationCenter
+    let options:UNAuthorizationOptions = [.sound]
     
     init(){
         nc = UNUserNotificationCenter.current()
-        nc.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
+        nc.requestAuthorization(options: options) { (granted, error) in
             print("autorizou? \(granted)")
             if let e = error {
                 print(e.localizedDescription)
@@ -27,10 +28,12 @@ class Scheduler {
     func scheduleWith(timeInterval: TimeInterval){
         let content = UNMutableNotificationContent()
         
-        content.sound = UNNotificationSound.default()
+        content.sound = UNNotificationSound(named: "beep.mp4")
         
-        content.title = "Hey!"
-        content.body = "\(timeInterval) seconds more passed by..."
+        if options.contains(.alert) {
+            content.title = "Hey!"
+            content.body = "\(timeInterval) seconds more passed by..."
+        }
         
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: true)
         
